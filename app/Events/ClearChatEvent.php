@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,18 +11,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class StoreMessageEvent implements ShouldBroadcast
+class ClearChatEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $newMessage;
+    private $chatID;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($newMessage)
+    public function __construct($chatID)
     {
-        $this->newMessage = $newMessage;
+        $this->chatID = $chatID;
     }
 
     /**
@@ -32,7 +33,8 @@ class StoreMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('store-message.' . $this->newMessage->chat_id),
+            new Channel('clear-chat.' . $this->chatID),
+            // ... a few more channels are allowed
         ];
     }
 
@@ -41,7 +43,7 @@ class StoreMessageEvent implements ShouldBroadcast
      */
     public function broadcastAs(): string
     {
-        return 'store-message';
+        return 'clear-chat';
     }
 
     /**
@@ -52,7 +54,7 @@ class StoreMessageEvent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'message' => $this->newMessage,
+            'messages' => Message::where('chat_id', $this->chatID)->get()->toArray(),
         ];
     }
 }

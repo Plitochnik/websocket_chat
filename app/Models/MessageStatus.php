@@ -5,20 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class MessageStatus extends Model
 {
     use HasFactory;
 
-    protected $table = 'messages';
+    protected $table = 'message_status';
 
     protected $fillable = [
-        'user_id',
         'chat_id',
-        'message',
+        'message_id',
+        'user_id',
+        'is_read',
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
     ];
+
+    public function message()
+    {
+        return $this->belongsTo(Message::class, 'message_id', 'id');
+    }
 }

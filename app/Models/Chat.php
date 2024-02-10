@@ -11,7 +11,15 @@ class Chat extends Model
 
     protected $table = 'chats';
 
-    protected $guarded = false;
+    protected $fillable = [
+        'title',
+        'users',
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     public function users()
     {
